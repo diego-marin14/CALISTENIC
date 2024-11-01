@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usuarios CRUD</title>
+<!-- Agrega los enlaces a Bootstrap y Font Awesome si los estás utilizando -->
+<link rel="stylesheet" href="user.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">
+        <img src="/assets/rhlm_gym.png" class="logo">
+    </div>
+    <nav class="nav-links">
+        <a href="http://localhost:5500/auth/dashboard.html">Inicio</a>
+        <a href="http://localhost:5500/auth/rutina/rutina.html">Rutinas</a>
+        <a href="http://localhost:5500">Cerrar sesión</a>
+    </nav>
+</header>
+
+<div class="container mt-5">
+    <div class="title text-center">
+        <h1 class="display-5">
+            <i class="fas fa-solid fa-user text-success" style="color: #74C0FC;"></i> <strong>Usuarios CRUD</strong>
+        </h1>
+    </div>
+    <div class="main row">
+        <div class="col-sm-12 col-md-4">
+            <button id="btnAgregarUsuario" class="btn btn-primary mb-3">Agregar Usuario</button>
+            <div id="formContainer" style="display: none;">
+                <form id="usuario-form" autocomplete="off">
+                    <div class="form-group mb-3">
+                        <label for="idPersona" style="color: white;">ID de Persona</label>
+                        <input type="text" id="idPersona" class="form-field" placeholder="ID de Persona">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="idSuscripcion" style="color: white;">ID de Suscripción</label>
+                        <input type="text" id="idSuscripcion" class="form-field" placeholder="ID de Suscripción">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="peso" style="color: white;">Peso</label>
+                        <input type="text" id="peso" class="form-field" placeholder="Peso">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="estatura" style="color: white;">Estatura</label>
+                        <input type="text" id="estatura" class="form-field" placeholder="Estatura">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="tipoCuerpo" style="color: white;">Tipo de Cuerpo</label>
+                        <input type="text" id="tipoCuerpo" class="form-field" placeholder="Tipo de Cuerpo">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="porcentajeGraso" style="color: white;">Porcentaje Graso</label>
+                        <input type="text" id="porcentajeGraso" class="form-field" placeholder="Porcentaje Graso">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="objetivo" style="color: white;">Objetivo</label>
+                        <input type="text" id="objetivo" class="form-field" placeholder="Objetivo">
+                    </div>
+                    <button type="button" class="btn btn-success btn-block mt-3" onclick="createUsuario(event)">Crear Usuario</button>
+                </form>
+            </div>
+        </div>
+        <div class="content col-sm-12 col-md-8">
+            <div class="table-container">
+                <table id="table-Users">
+                    <thead>
+                        <tr>
+                            <th class="color-white">ID</th>
+                            <th class="color-white">ID de Persona</th>
+                            <th class="color-white">ID de Suscripción</th>
+                            <th class="color-white">Peso</th>
+                            <th class="color-white">Estatura</th>
+                            <th class="color-white">Tipo de Cuerpo</th>
+                            <th class="color-white">Porcentaje Graso</th>
+                            <th class="color-white">Objetivo</th>
+                            <th class="color-white"></th>
+                            <th class="color-white"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="usuariosList">
+                        <!-- Aquí se mostrarán los usuarios -->
+                        <tr>
+                            <td>1</td>
+                            <td>12345</td>
+                            <td>67890</td>
+                            <td>70</td>
+                            <td>170</td>
+                            <td>Mesomorfo</td>
+                            <td>20%</td>
+                            <td>Ganar masa muscular</td>
+                            <td><button class="btn btn-success btn-sm edit" data-id="1">Editar</button></td>
+                            <td><button class="btn btn-danger btn-sm delete" onclick="deleteUsuario(1)">Eliminar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para editar usuario -->
+<div class="modal" id="editUsuarioModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Editar Usuario</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form id="editUsuarioForm">
+            <div class="form-group">
+              <label for="editIdPersona">ID de Persona:</label>
+              <input type="text" class="form-control" id="editIdPersona">
+            </div>
+            <div class="form-group">
+              <label for="editIdSuscripcion">ID de Suscripción:</label>
+              <input type="text" class="form-control" id="editIdSuscripcion">
+            </div>
+            <div class="form-group">
+              <label for="editPeso">Peso:</label>
+              <input type="text" class="form-control" id="editPeso">
+            </div>
+            <div class="form-group">
+              <label for="editEstatura">Estatura:</label>
+              <input type="text" class="form-control" id="editEstatura">
+            </div>
+            <div class="form-group">
+              <label for="editTipoCuerpo">Tipo de Cuerpo:</label>
+              <input type="text" class="form-control" id="editTipoCuerpo">
+            </div>
+            <div class="form-group">
+              <label for="editPorcentajeGraso">Porcentaje Graso:</label>
+              <input type="text" class="form-control" id="editPorcentajeGraso">
+            </div>
+            <div class="form-group">
+              <label for="editObjetivo">Objetivo:</label>
+              <input type="text" class="form-control" id="editObjetivo">
+            </div>
+            <div class="form-group">
+              <input type="hidden" id="editUsuarioId" name="editUsuarioId">
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+          </form>
+        </div>
+  
+      </div>
+    </div>
+</div>
+
+<script src="user.js"></script>
+
+</body>
+</html>

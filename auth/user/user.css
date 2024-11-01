@@ -1,0 +1,149 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Poppins:wght@300;400;500;600&display=swap");
+
+* {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-repeat: no-repeat;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../../assets/albumes.jpg');
+  background-size: cover;
+  z-index: -1; /* Coloca el fondo detrás del contenido */
+  opacity: 0.9; /* Opacidad solo aplicada a la imagen de fondo */
+}
+
+
+td {
+	padding: 15px;
+	background-color: rgba(255,255,255,0.8);
+	color: #383535;
+    text-align: center;
+}
+
+thead {
+	tr {
+		background-color: #55608f;
+	}
+}
+
+.color-white{
+  color: #FFF;
+}
+
+.container input[type="text"] {
+  padding: 15px; /* Aumenta el relleno */
+  width: 400px; /* Aumenta el ancho */
+  height: 40px;
+  margin-bottom: 20px;
+  display: block;
+  font-size: 18px; /* Aumenta el tamaño de la fuente */
+}
+
+.container button {
+  padding: 10px 15px; /* Aumenta el relleno */
+  background-color: #000000;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 18px; /* Aumenta el tamaño de la fuente */
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	overflow: hidden;
+	box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+
+.button-name:hover {
+  background-color: #21b644 !important;
+}
+
+/* Cambiar el color del título */
+.title h1 {
+  color: #ffffff; /* Color azul */
+}
+
+.form-field {
+  height: 46px;
+  padding: 0 16px;
+  border: none;
+  border-bottom: 2px solid #000000;
+  background: linear-gradient(180deg, white, #f8faff);
+  border-radius: 4px;
+  font-family: sans-serif;
+  outline: 0;
+  transition: .2s;
+  width: 100%;
+}
+
+.form-field:focus {
+  border-color: #b82424;
+}
+
+
+.header {
+  background-color: #000000;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  font-size: 25px;
+  
+}
+
+.container {
+  margin-top: 220px; /* Ajusta este valor según el tamaño del encabezado */
+  text-align: center;
+}
+
+.logo {
+  float: left; /* Logo a la izquierda */
+  width: 100px;
+  height: auto;
+}
+
+.nav-links {
+  float: right; /* Enlaces de navegación a la derecha */
+  margin-right: 40px; 
+}
+
+.nav-links a {
+  color: white; /* Color del texto de los enlaces */
+  text-decoration: none; /* Quitar subrayado de los enlaces */
+  margin-left: 10px; /* Añade un pequeño margen entre los enlaces */
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.nav-links .active {
+  font-weight: bold; /* Style for the active link */
+}

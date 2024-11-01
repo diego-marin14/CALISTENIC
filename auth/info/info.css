@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Poppins:wght@300;400;500;600&display=swap");
+
+* {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f8fe;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../../assets/rhlm2.jpg');
+  background-size: cover;
+  z-index: -1; /* Coloca el fondo detrás del contenido */
+  opacity: 0.9; /* Opacidad solo aplicada a la imagen de fondo */
+}
+
+
+.user-card {
+    max-width: 40rem; /* Aumenta el ancho máximo de la tarjeta */
+    height: auto;
+    display: flex;
+    flex-direction: column; /* Cambia la dirección del flex para apilar los elementos */
+    align-items: center; /* Centra los elementos horizontalmente */
+    padding: 2rem; /* Aumenta el padding para dar más espacio al contenido */
+    background: #fff;
+    border-radius: 0.5rem;
+    gap: 1rem;
+    box-shadow: 20px 20px 20px rgba(172, 172, 172, 0.541); 
+  }
+  
+  .avatar {
+      width: 200px; /* Ajusta el ancho del avatar según lo necesites */
+      height: auto; /* La altura se ajustará automáticamente para mantener la proporción */
+      border-radius: 50%; /* Para redondear la imagen y hacerla parecer más estilizada */
+  }
+
+  .header {
+    background-color: #000000;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    font-size: 25px;
+    
+}
+
+.container {
+    margin-top: 220px; /* Ajusta este valor según el tamaño del encabezado */
+    text-align: center;
+}
+
+  .logo {
+    float: left; /* Logo a la izquierda */
+}
+
+.nav-links {
+    float: right; /* Enlaces de navegación a la derecha */
+    margin-right: 40px; 
+}
+
+.nav-links a {
+    color: white; /* Color del texto de los enlaces */
+    text-decoration: none; /* Quitar subrayado de los enlaces */
+    margin-left: 10px; /* Añade un pequeño margen entre los enlaces */
+}
+  
+  .nav-links a:hover {
+    text-decoration: underline;
+  }
+  
+  .nav-links .active {
+    font-weight: bold; /* Style for the active link */
+  }
