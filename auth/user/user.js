@@ -1,7 +1,58 @@
-const BASE_URL = 'http://localhost:8080/api/usuario';
+const BASE_URL_USUARIO = 'http://localhost:8080/api/usuario';
+const BASE_URL_PERSONA= 'http://localhost:8080/api/persona';
+const BASE_URL_SUSCRIPCION= 'http://localhost:8080/api/tipoSuscripcion';
+
+const editUsuarioModal = document.getElementById("editUsuarioModal");
+const editUsuarioForm = document.getElementById("editUsuarioForm");
+
+// Evento click para el botón de edición
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Llama a la función cuando la página esté completamente cargada
+    getAllUsuarios();  // Por ejemplo, cargar los usuarios
+    getAllPersonas();
+    getAllSuscripcion()
+    const formContainer = document.getElementById('formContainer');
+    const btnAgregarUsuario = document.getElementById('btnAgregarUsuario');
+
+    btnAgregarUsuario.addEventListener('click', () => {
+        if (formContainer.style.display === 'none') {
+            formContainer.style.display = 'block';
+            btnAgregarUsuario.textContent = 'Cerrar Formulario';
+        } else {
+            formContainer.style.display = 'none';
+            btnAgregarUsuario.textContent = 'Agregar Usuario';
+        }
+    });
+
+    document.getElementById('usuario-form').addEventListener('submit', createUsuario);
+});
+document.addEventListener("click", function (event) {
+    if (event.target.classList.contains("edit")) {
+        // Obtén el ID del usuario desde el atributo `data-id`
+        const usuarioId = event.target.getAttribute("data-id");
+        cargarDatosUsuarioParaEditar(usuarioId);
+        
+        
+    }
+});
+
+function showAlert(message, backgroundColor = "#dc3545") {
+    Toastify({
+        text: message,
+        position: "top-center",
+        className: "error",
+        duration: 4000,
+        style: {
+            background: backgroundColor,
+        },
+    }).showToast();
+}
 
 function getAllUsuarios() {
-    fetch(`${BASE_URL}/getAll`)
+    fetch(`${BASE_URL_USUARIO}/getAll`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('No se pudo obtener la lista de usuarios');
@@ -12,10 +63,54 @@ function getAllUsuarios() {
             displayUsuarios(usuarios);
         })
         .catch(error => {
+            showAlert('Error al obtener la lista de usuarios: ' + error.message);
             console.error('Error al obtener la lista de usuarios:', error);
         });
 }
 
+function getAllPersonas() {
+    console.log("pu")
+    fetch(`${BASE_URL_PERSONA}/getAll`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('No se pudo obtener la lista de personas');
+            }
+            return response.json();
+        })
+        .then(personas => {
+            displayPersonas(personas);
+        })
+        .catch(error => {
+            showAlert('Error al obtener la lista de personas: ' + error.message);
+            console.error('Error al obtener la lista de personas:', error);
+        });
+}
+
+function getAllSuscripcion() {
+    fetch(`${BASE_URL_SUSCRIPCION}/getAll`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('No se pudo obtener la lista de suscripciones');
+            }
+            return response.json();
+        })
+        .then(suscripcion => {
+            displaySuscipciones(suscripcion);
+        })
+        .catch(error => {
+            showAlert('Error al obtener la lista de suscripciones: ' + error.message);
+            console.error('Error al obtener la lista de suscripciones:', error);
+        });
+}
+function displaySuscipciones(suscripciones){
+    const selectElement = document.getElementById('idSuscripcion');
+    suscripciones.forEach(suscripcion => {
+        const option = document.createElement('option');
+        option.value = suscripcion.id;
+        option.textContent = suscripcion.nombre;
+        selectElement.appendChild(option);
+    });
+}
 function displayUsuarios(usuarios) {
     const usuariosListElement = document.getElementById('usuariosList');
     usuariosListElement.innerHTML = '';
@@ -41,27 +136,19 @@ function displayUsuarios(usuarios) {
         usuariosListElement.appendChild(row);
     });
 }
-document.addEventListener('DOMContentLoaded', () => {
-    const formContainer = document.getElementById('formContainer');
-    const btnAgregarUsuario = document.getElementById('btnAgregarUsuario');
-
-    btnAgregarUsuario.addEventListener('click', () => {
-        if (formContainer.style.display === 'none') {
-            formContainer.style.display = 'block';
-            btnAgregarUsuario.textContent = 'Cerrar Formulario';
-        } else {
-            formContainer.style.display = 'none';
-            btnAgregarUsuario.textContent = 'Agregar Usuario';
-        }
+function displayPersonas(personas) {
+    const selectElement = document.getElementById('idPersona');
+    personas.forEach(persona => {
+        const option = document.createElement('option');
+        option.value = persona.id;
+        option.textContent = persona.nombre;
+        selectElement.appendChild(option);
     });
-
-    document.getElementById('usuario-form').addEventListener('submit', createUsuario);
-});
-
+}
 
 function createUsuario(event) {
-    event.preventDefault(); // Evita que el formulario se envíe automáticamente
-  
+    event.preventDefault();
+
     const idPersona = document.getElementById('idPersona').value;
     const idSuscripcion = document.getElementById('idSuscripcion').value;
     const peso = document.getElementById('peso').value;
@@ -69,20 +156,26 @@ function createUsuario(event) {
     const tipoCuerpo = document.getElementById('tipoCuerpo').value;
     const porcentajeGraso = document.getElementById('porcentajeGraso').value;
     const objetivo = document.getElementById('objetivo').value;
-  
+    const fechaFin=document.getElementById('idEndDateSuscripcion').value
+    const fechaInicio=document.getElementById('idInitDateSuscripcion').value
+
+
     const data = {
         idPersona: idPersona,
-        idSuscripcion: idSuscripcion,
+        suscripcion:{
+            idTipoSuscripcion: idSuscripcion,
+            fechaInicio:fechaInicio,
+            fechaFin:fechaFin,
+            estado:true,
+        },
         peso: peso,
         estatura: estatura,
         tipoCuerpo: tipoCuerpo,
         porcentajeGraso: porcentajeGraso,
         objetivo: objetivo
     };
-  
-    console.log('Data a enviar:', data); // Registro para verificar los datos antes de enviarlos
-  
-    fetch('http://localhost:8080/api/usuario/create', { // Ajusta la URL para la creación de usuarios
+
+    fetch('http://localhost:8080/api/usuario/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -93,20 +186,18 @@ function createUsuario(event) {
         if (!response.ok) {
             throw new Error('No se pudo crear el usuario');
         }
-        // Actualizar la lista de usuarios después de crear uno nuevo
         getAllUsuarios();
-        // Limpiar el formulario después de crear el usuario
         document.getElementById('usuario-form').reset();
-        console.log('Usuario creado exitosamente'); // Registro para verificar el éxito de la operación
+        showAlert('Usuario creado exitosamente', "#28a745");  // Green success alert
     })
     .catch(error => {
+        showAlert('Error al crear el usuario: ' + error.message);
         console.error('Error al crear el usuario:', error);
     });
 }
 
-
 function cargarDatosUsuarioParaEditar(id) {
-    fetch(`${BASE_URL}/findById/${id}`)
+    fetch(`${BASE_URL_USUARIO}/findById/${id}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('No se pudo obtener el usuario para editar');
@@ -114,26 +205,24 @@ function cargarDatosUsuarioParaEditar(id) {
             return response.json();
         })
         .then(usuario => {
-            // Llenar el formulario con los datos del usuario
             document.getElementById('editIdPersona').value = usuario.idPersona;
-            document.getElementById('editIdSuscripcion').value = usuario.idSuscripcion.nm;
+            document.getElementById('editIdSuscripcion').value = usuario.idSuscripcion;
             document.getElementById('editPeso').value = usuario.peso;
             document.getElementById('editEstatura').value = usuario.estatura;
             document.getElementById('editTipoCuerpo').value = usuario.tipoCuerpo;
             document.getElementById('editPorcentajeGraso').value = usuario.porcentajeGraso;
             document.getElementById('editObjetivo').value = usuario.objetivo;
-            document.getElementById('editUsuarioId').value = id; // Establecer el id del usuario en un campo oculto
+            document.getElementById('editUsuarioId').value = id;
+            editUsuarioModal.style.display = "block";
         })
         .catch(error => {
+            showAlert('Error al obtener el usuario para editar: ' + error.message);
             console.error('Error al obtener el usuario para editar:', error);
         });
 }
 
-
 function guardarCambiosUsuario(event) {
-    event.preventDefault(); // Evitar que el formulario se envíe automáticamente
-
-    // Obtener los nuevos valores del formulario de edición
+    event.preventDefault();
     const idPersona = document.getElementById('editIdPersona').value;
     const idSuscripcion = document.getElementById('editIdSuscripcion').value;
     const peso = document.getElementById('editPeso').value;
@@ -141,9 +230,8 @@ function guardarCambiosUsuario(event) {
     const tipoCuerpo = document.getElementById('editTipoCuerpo').value;
     const porcentajeGraso = document.getElementById('editPorcentajeGraso').value;
     const objetivo = document.getElementById('editObjetivo').value;
-    const id = document.getElementById('editUsuarioId').value; // Obtener el id del usuario que se está editando
+    const id = document.getElementById('editUsuarioId').value;
 
-    // Construir el objeto con los nuevos datos del usuario
     const data = {
         id: id,
         idPersona: idPersona,
@@ -155,63 +243,51 @@ function guardarCambiosUsuario(event) {
         objetivo: objetivo
     };
 
-    // Enviar los datos al servidor mediante una solicitud PUT
-    fetch(`${BASE_URL}/update/${id}`, { // Incluye el ID del usuario en la URL
+    fetch(`${BASE_URL_USUARIO}/update/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    })    
+    })
     .then(response => {
+        console.log('pureb')
         if (!response.ok) {
             throw new Error('No se pudieron guardar los cambios en el usuario');
         }
-        // Actualizar la lista de usuarios después de guardar los cambios
         getAllUsuarios();
-        // Cerrar el modal de edición
         const modal = document.getElementById('editUsuarioModal');
-        modal.classList.remove('show'); // Ocultar el modal
-        modal.style.display = 'none'; // Ocultar el modal
-        document.body.classList.remove('modal-open'); // Eliminar la clase de body que agrega el modal
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+        document.body.classList.remove('modal-open');
         const modalBackdrop = document.getElementsByClassName('modal-backdrop')[0];
-        modalBackdrop.parentNode.removeChild(modalBackdrop); // Eliminar el fondo del modal
+        modalBackdrop.parentNode.removeChild(modalBackdrop);
+        showAlert('Cambios guardados exitosamente', "#28a745");  // Green success alert
     })
     .catch(error => {
+        showAlert('Error al guardar los cambios en el usuario: ' + error.message);
         console.error('Error al guardar los cambios en el usuario:', error);
     });
 }
 
-// Llamar a la función cargarDatosUsuarioParaEditar cuando se hace clic en el botón de editar en la tabla
-document.addEventListener('click', function(event) {
-    if (event.target.classList.contains('edit')) {
-        const id = event.target.dataset.id; // Obtener el id del usuario desde el atributo data-id del botón
-        cargarDatosUsuarioParaEditar(id);
-        const modal = document.getElementById('editUsuarioModal');
-        modal.classList.add('show'); // Mostrar el modal de edición
-        modal.style.display = 'block'; // Mostrar el modal de edición
-        document.body.classList.add('modal-open'); // Agregar la clase de body que agrega el modal
-        const modalBackdrop = document.createElement('div');
-        modalBackdrop.classList.add('modal-backdrop', 'fade', 'show');
-        document.body.appendChild(modalBackdrop); // Agregar el fondo del modal
-    }
-});
-
-document.getElementById('editUsuarioForm').addEventListener('submit', guardarCambiosUsuario);
-
 function deleteUsuario(id) {
     if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
-        fetch(`${BASE_URL}/delete/${id}`, { method: 'DELETE' })
+        fetch(`${BASE_URL_USUARIO}/delete/${id}`, { method: 'DELETE' })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error al eliminar el usuario');
                 }
                 getAllUsuarios();
+                showAlert('Usuario eliminado exitosamente', "#28a745");  // Green success alert
             })
             .catch(error => {
+                showAlert('Error al eliminar el usuario: ' + error.message);
                 console.error('Error al eliminar el usuario:', error);
             });
     }
 }
-
-window.onload = getAllUsuarios;
+window.onclick = function (event) {
+    if (event.target == editUsuarioModal) {
+        editUsuarioModal.style.display = "none";
+    }
+};

@@ -8,46 +8,25 @@ document.addEventListener("DOMContentLoaded", function() {
         const fecha = fechaInput.value;
 
         if (documento) {
-            fetchAsistenciasByDocumento(documento);
+            fetchAsistencias('documento', documento);
         } else if (fecha) {
-            fetchAsistenciasByFecha(fecha);
+            fetchAsistencias('fecha', fecha);
         } else {
-            Toastify({
-                text: "Por favor, ingrese un documento o una fecha.",
-                position: "top-center",
-                className: "info",
-                duration: 4000,
-
-                style: {
-                  background: "#dc3545",
-                },
-              }).showToast();
-
-            
+            showToast("Por favor, ingrese un documento o una fecha.", "error");
         }
     });
 
-    function fetchAsistenciasByDocumento(documento) {
-        var mensajeError = document.getElementById('mensaje-error');
-        fetch(`http://localhost:8080/api/asistencia/findAsistenciaByDocument?identificacion=${documento}`)
+    function fetchAsistencias(type, value) {
+        const url = type === 'documento' 
+            ? `http://localhost:8080/api/asistencia/findAsistenciaByDocument?identificacion=${value}`
+            : `http://localhost:8080/api/asistencia/findAsistenciaByFecha?fechaLlegada=${value}`;
+
+        fetch(url)
             .then(response => {
                 if (response.status === 204) {
-
-                    Toastify({
-                        text: 'No se encontraron asistencias para el documento ingresado.',
-                        className: "info",
-                        duration: 4000,
-                        position: "top-center",
-                        style: {
-                          background: "#dc3545",
-                        },
-                      }).showToast();
-
-                    var data = []
-                    displayAsistencias(data);
+                    showToast(`No se encontraron asistencias para la ${type === 'documento' ? 'documento' : 'fecha'} ingresada.`, "info");
+                    displayAsistencias([]);
                     return [];
-                    
-
                 }
                 return response.json();
             })
@@ -57,42 +36,21 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             })
             .catch(error => {
-                console.error('Error al obtener asistencias por documento:', error);
-                mostrarMensajeError('Error al obtener asistencias por documento.');
+                console.error(`Error al obtener asistencias por ${type}:`, error);
+                showToast(`Error al obtener asistencias por ${type}.`, "error");
             });
     }
 
-    function fetchAsistenciasByFecha(fecha) {
-        var mensajeError = document.getElementById('mensaje-error');
-        fetch(`http://localhost:8080/api/asistencia/findAsistenciaByFecha?fechaLlegada=${fecha}`)
-            .then(response => {
-                if (response.status === 204) {
-
-                    Toastify({
-                        text: 'No se encontraron asistencias para la fecha ingresada.',
-                        className: "info",
-                        position: "top-center",
-                        duration: 4000,
-                        style: {
-                          background: "#dc3545",
-                        },
-                      }).showToast();
-
-                    var data = []
-                    displayAsistencias(data);
-                    return [];
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.length > 0) {
-                    displayAsistencias(data);
-                }
-            })
-            .catch(error => {
-                console.error('Error al obtener asistencias por fecha:', error);
-                mostrarMensajeError('Error al obtener asistencias por fecha.');
-            });
+    function showToast(message, type) {
+        Toastify({
+            text: message,
+            position: "top-center",
+            className: type === "error" ? "error" : "info",
+            duration: 4000,
+            style: {
+                background: type === "error" ? "#dc3545" : "#17a2b8",
+            },
+        }).showToast();
     }
 
     function displayAsistencias(asistencias) {
@@ -102,29 +60,20 @@ document.addEventListener("DOMContentLoaded", function() {
         asistencias.forEach(asistencia => {
             const row = document.createElement("tr");
 
-            const nombreCell = document.createElement("td");
-            nombreCell.textContent = asistencia.nombreUsuario;
-            row.appendChild(nombreCell);
+            const fields = [
+                { text: asistencia.nombreUsuario },
+                { text: new Date(asistencia.fechaInicio).toLocaleDateString() },
+                { text: new Date(asistencia.fechaFin).toLocaleDateString() },
+                { text: asistencia.nombreSuscripcion },
+                { text: new Date(asistencia.llegada).toLocaleDateString() },
+                { text: "Ver Usuario" }
+            ];
 
-            const inicioCell = document.createElement("td");
-            inicioCell.textContent = new Date(asistencia.fechaInicio).toLocaleDateString();
-            row.appendChild(inicioCell);
-
-            const finCell = document.createElement("td");
-            finCell.textContent = new Date(asistencia.fechaFin).toLocaleDateString();
-            row.appendChild(finCell);
-
-            const suscripcionCell = document.createElement("td");
-            suscripcionCell.textContent = asistencia.nombreSuscripcion;
-            row.appendChild(suscripcionCell);
-
-            const llegadaCell = document.createElement("td");
-            llegadaCell.textContent = new Date(asistencia.llegada).toLocaleDateString();
-            row.appendChild(llegadaCell);
-
-            const accionesCell = document.createElement("td");
-            accionesCell.textContent = "Ver Usuario"; // Aquí puedes agregar botones o enlaces para acciones
-            row.appendChild(accionesCell);
+            fields.forEach(field => {
+                const cell = document.createElement("td");
+                cell.textContent = field.text;
+                row.appendChild(cell);
+            });
 
             tablaAsistencias.appendChild(row);
         });
